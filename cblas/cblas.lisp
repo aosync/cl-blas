@@ -1,10 +1,10 @@
 (in-package :cblas)
 
-(define-foreign-library libblas
-  (:unix (:or "libblas.so.3" "libblas.so"))
-  (t (:default "libblas")))
+(define-foreign-library libcblas
+  (:unix (:or "libcblas.so.3" "libcblas.so"))
+  (t (:default "libcblas")))
 
-(use-foreign-library libblas)
+(use-foreign-library libcblas)
 
 (defctype cblas-int :int)
 (defctype cblas-index :size)
