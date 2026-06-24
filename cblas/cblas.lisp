@@ -32,13 +32,22 @@
   (real :double)
   (imag :double))
 
+(define-foreign-type cblas-buffer-type () ()
+  (:actual-type :pointer))
+
+(define-parse-method cblas-buffer ()
+  (make-instance 'cblas-buffer-type))
+
+(defmethod translate-to-foreign (value (type cblas-buffer-type))
+  (cond ((pointerp value) value)
+		(t (slot-value value 'buffer))))
 
 (defcblasfun ("cblas_~aaxpy" ("s" "d" "c" "z")) :void
   (n     cblas-int)
   (alpha :scalar)
-  (x     :pointer)
+  (x     cblas-buffer)
   (incx  cblas-int)
-  (y     :pointer)
+  (y     cblas-buffer)
   (incy  cblas-int))
 
 (defcblasfun ("cblas_~ascal" ("s" "d" "c" "z" "cs" "zd")) :void
