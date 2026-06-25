@@ -1,8 +1,9 @@
 (in-package :cblas)
 
 (define-foreign-library libcblas
-  (:unix (:or "libcblas.so.3" "libcblas.so"))
-  (t (:default "libcblas")))
+  (:darwin (:or "/opt/homebrew/opt/openblas/lib/libopenblas.dylib"))
+  (:unix   (:or "libcblas.so.3" "libcblas.so"))
+  (t       (:default "libcblas")))
 
 (use-foreign-library libcblas)
 
@@ -25,13 +26,6 @@
   (:left 141)
   :right)
 
-(defcstruct cblas-complex
-  (real :float)
-  (imag :float))
-(defcstruct cblas-complex-double
-  (real :double)
-  (imag :double))
-
 (define-foreign-type cblas-buffer-type () ()
   (:actual-type :pointer))
 
@@ -41,6 +35,34 @@
 (defmethod translate-to-foreign (value (type cblas-buffer-type))
   (cond ((pointerp value) value)
 		(t (slot-value value 'buffer))))
+
+(define-foreign-type cblas-complex-float-type () ()
+  (:actual-type :int))
+
+(define-parse-method cblas-complex-float ()
+  (make-instance 'cblas-complex-float-type))
+
+(defmethod cffi:expand-to-foreign-dyn (value var body (type cblas-complex-float-type))
+  (let ((val (gensym "VAL")))
+    `(let ((,val ,value))
+       (cffi:with-foreign-object (,var :float 2)
+         (setf (cffi:mem-aref ,var :float 0) (realpart ,val)
+               (cffi:mem-aref ,var :float 1) (imagpart ,val))
+         ,@body))))
+
+(define-foreign-type cblas-complex-double-type () ()
+  (:actual-type :int))
+
+(define-parse-method cblas-complex-double ()
+  (make-instance 'cblas-complex-double-type))
+
+(defmethod cffi:expand-to-foreign-dyn (value var body (type cblas-complex-double-type))
+  (let ((val (gensym "VAL")))
+    `(let ((,val ,value))
+       (cffi:with-foreign-object (,var :double 2)
+         (setf (cffi:mem-aref ,var :double 0) (realpart ,val)
+               (cffi:mem-aref ,var :double 1) (imagpart ,val))
+         ,@body))))
 
 (defcblasfun ("cblas_~aaxpy" ("s" "d" "c" "z")) :void
   (n     cblas-int)
@@ -53,28 +75,28 @@
 (defcblasfun ("cblas_~ascal" ("s" "d" "c" "z" "cs" "zd")) :void
   (n     cblas-int)
   (alpha :scalar)
-  (x     :pointer)
+  (x     cblas-buffer)
   (incx  cblas-int))
 
 (defcblasfun ("cblas_~acopy" ("s" "d" "c" "z")) :void
   (n    cblas-int)
-  (x    :pointer)
+  (x    cblas-buffer)
   (incx cblas-int)
-  (y    :pointer)
+  (y    cblas-buffer)
   (incy cblas-int))
 
 (defcblasfun ("cblas_~aswap" ("s" "d" "c" "z")) :void
   (n    cblas-int)
-  (x    :pointer)
+  (x    cblas-buffer)
   (incx cblas-int)
-  (y    :pointer)
+  (y    cblas-buffer)
   (incy cblas-int))
 
 (defcblasfun ("cblas_~adot" ("s" "d")) :scalar
   (n    cblas-int)
-  (x    :pointer)
+  (x    cblas-buffer)
   (incx cblas-int)
-  (y    :pointer)
+  (y    cblas-buffer)
   (incy cblas-int))
 
 (defcblasfun ("cblas_~adotu_sub" ("c" "z")) :void

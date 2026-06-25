@@ -21,8 +21,8 @@
 				 ,@(substitute-keywords
 					`(:scalar ,(cond ((string= prefix "s")  :float)
 									 ((string= prefix "d")  :double)
-									 ((string= prefix "c")  :pointer)
-									 ((string= prefix "z")  :pointer)
+									 ((string= prefix "c")  'cblas-complex-float)
+									 ((string= prefix "z")  'cblas-complex-double)
 									 ((string= prefix "sc") :float)
 									 ((string= prefix "dz") :double)
 									 ((string= prefix "cs") :float)

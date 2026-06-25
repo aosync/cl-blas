@@ -1,0 +1,19 @@
+(in-package :cblas)
+
+(defclass cblas-buffer ()
+  ((buffer :initarg :buffer)))
+
+(defclass cblas-sbuffer (cblas-buffer) ())
+(defclass cblas-dbuffer (cblas-buffer) ()) 
+(defclass cblas-cbuffer (cblas-buffer) ())
+(defclass cblas-zbuffer (cblas-buffer) ())
+
+(defmethod blas:axpy (n (alpha single-float) (x cblas-sbuffer) incx (y cblas-sbuffer) incy)
+  (cblas-saxpy n alpha x incx y incy))
+(defmethod blas:axpy (n (alpha double-float) (x cblas-dbuffer) incx (y cblas-dbuffer) incy)
+  (cblas-daxpy n alpha x incx y incy))
+(defmethod blas:axpy (n (alpha complex) (x cblas-cbuffer) incx (y cblas-cbuffer) incy)
+  (cblas-caxpy n alpha x incx y incy))
+(defmethod blas:axpy (n (alpha complex) (x cblas-zbuffer) incx (y cblas-zbuffer) incy)
+  (cblas-zaxpy n alpha x incx y incy))
+
