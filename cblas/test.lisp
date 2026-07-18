@@ -1,3 +1,5 @@
+
+
 (defun print-foreign-array (array type n)
   (dotimes (i n)
 	(format t "  ~a~%" (mem-aref array type i))))
@@ -18,3 +20,19 @@
 	(format t "After vec-b~%")
 	(print-foreign-array vec-b :double 2)))
   
+
+(with-foreign-objects ((vec-a :float 2)
+					   (vec-b :float 2))
+  (setf (mem-aref vec-a :float 0) 1.0)
+  (setf (mem-aref vec-a :float 1) 1.0)
+  (setf (mem-aref vec-b :float 0) 1.0)
+  (setf (mem-aref vec-b :float 1) 1.0)
+
+
+  (let ((a (make-instance 'cblas-cbuffer :buffer vec-a))
+		(b (make-instance 'cblas-cbuffer :buffer vec-b)))
+	(format t "Before vec-b~%")
+	(print-foreign-array vec-b :float 2)
+	(blas:axpy 1 (complex 1.0 1.0) a 1 b 1)
+	(format t "After vec-b~%")
+	(print-foreign-array vec-b :float 2)))

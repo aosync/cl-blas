@@ -17,3 +17,11 @@
 (defmethod blas:axpy (n (alpha complex) (x cblas-zbuffer) incx (y cblas-zbuffer) incy)
   (cblas-zaxpy n alpha x incx y incy))
 
+(defmethod blas:scal (n (alpha single-float) (x cblas-sbuffer) incx)
+  (cblas-sscal n alpha x incx))
+(defmethod blas:scal (n (alpha double-float) (x cblas-dbuffer) incx)
+  (cblas-dscal n alpha x incx))
+(defmethod blas:scal (n (alpha complex) (x cblas-cbuffer) incx)
+  (cblas-cscal n alpha x incx))
+(defmethod blas:scal (n (alpha complex) (x cblas-zbuffer) incx)
+  (cblas-zscal n alpha x incx))
