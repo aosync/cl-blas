@@ -34,3 +34,12 @@
   (cblas-ccopy n x incx y incy))
 (defmethod blas:copy (n (x cblas-zbuffer) incx (y cblas-zbuffer) incy)
   (cblas-zcopy n x incx y incy))
+
+(defmethod blas:swap (n (x cblas-sbuffer) incx (y cblas-sbuffer) incy)
+  (cblas-sswap n x incx y incy))
+(defmethod blas:swap (n (x cblas-dbuffer) incx (y cblas-dbuffer) incy)
+  (cblas-dswap n x incx y incy))
+(defmethod blas:swap (n (x cblas-cbuffer) incx (y cblas-cbuffer) incy)
+  (cblas-cswap n x incx y incy))
+(defmethod blas:swap (n (x cblas-zbuffer) incx (y cblas-zbuffer) incy)
+  (cblas-zswap n x incx y incy))
