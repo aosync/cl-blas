@@ -43,3 +43,46 @@
   (cblas-cswap n x incx y incy))
 (defmethod blas:swap (n (x cblas-zbuffer) incx (y cblas-zbuffer) incy)
   (cblas-zswap n x incx y incy))
+
+
+
+(defmethod blas:dot (n (x cblas-sbuffer) incx (y cblas-sbuffer) incy)
+  (cblas-sdot n x incx y incy))
+(defmethod blas:dot (n (x cblas-dbuffer) incx (y cblas-dbuffer) incy)
+  (cblas-ddot n x incx y incy))
+
+(defmethod blas:dotu (n (x cblas-cbuffer) incx (y cblas-cbuffer) incy)
+  (cffi:with-foreign-object (dotu :float 2)
+	(cblas-cdotu-sub n x incx y incy dotu)
+	(complex
+	 (cffi:mem-aref dotu :float 0)
+	 (cffi:mem-aref dotu :float 1))))
+(defmethod blas:dotu (n (x cblas-zbuffer) incx (y cblas-zbuffer) incy)
+  (cffi:with-foreign-object (dotu :double 2)
+	(cblas-zdotu-sub n x incx y incy dotu)
+	(complex
+	 (cffi:mem-aref dotu :double 0)
+	 (cffi:mem-aref dotu :double 1))))
+
+(defmethod blas:dotc (n (x cblas-cbuffer) incx (y cblas-cbuffer) incy)
+  (cffi:with-foreign-object (dotc :float 2)
+	(cblas-cdotc-sub n x incx y incy dotc)
+	(complex
+	 (cffi:mem-aref dotc :float 0)
+	 (cffi:mem-aref dotc :float 1))))
+(defmethod blas:dotc (n (x cblas-zbuffer) incx (y cblas-zbuffer) incy)
+  (cffi:with-foreign-object (dotc :double 2)
+	(cblas-zdotc-sub n x incx y incy dotc)
+	(complex
+	 (cffi:mem-aref dotc :double 0)
+	 (cffi:mem-aref dotc :double 1))))
+
+(defmethod blas:nrm2 (n (x cblas-sbuffer) incx)
+  (cblas-snrm2 n x incx))
+(defmethod blas:nrm2 (n (x cblas-dbuffer) incx)
+  (cblas-dnrm2 n x incx))
+(defmethod blas:nrm2 (n (x cblas-cbuffer) incx)
+  (cblas-scnrm2 n x incx))
+(defmethod blas:nrm2 (n (x cblas-zbuffer) incx)
+  (cblas-dznrm2 n x incx))
+

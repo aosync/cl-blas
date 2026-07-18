@@ -24,9 +24,9 @@
 (with-foreign-objects ((vec-a :float 2)
 					   (vec-b :float 2))
   (setf (mem-aref vec-a :float 0) 1.0)
-  (setf (mem-aref vec-a :float 1) 0.0)
-  (setf (mem-aref vec-b :float 0) 0.0)
-  (setf (mem-aref vec-b :float 1) 1.0)
+  (setf (mem-aref vec-a :float 1) 1.0)
+  (setf (mem-aref vec-b :float 0) 1.0)
+  (setf (mem-aref vec-b :float 1) 0.0)
 
 
   (let ((a (make-instance 'cblas-cbuffer :buffer vec-a))
@@ -36,7 +36,7 @@
 	;(blas:axpy 1 (complex 1.0 1.0) a 1 b 1)
 	;(blas:scal 1 (complex 1.0 0.0) b 1)
 	;(blas:copy 1 a 1 b 1)
-	(blas:swap 1 a 1 b 1)
-	(blas:swap 1 a 1 b 1)
+	(let ((d (blas:nrm2 1 a 1)))
+	  (format t "dot product a @ b = ~a~%" d))
 	(format t "After vec-b~%")
 	(print-foreign-array vec-b :float 2)))
