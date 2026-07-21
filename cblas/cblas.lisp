@@ -37,7 +37,7 @@
 		(t (slot-value value 'buffer))))
 
 (define-foreign-type cblas-complex-float-type () ()
-  (:actual-type :int))
+  (:actual-type :pointer))
 
 (define-parse-method cblas-complex-float ()
   (make-instance 'cblas-complex-float-type))
@@ -51,7 +51,7 @@
          ,@body))))
 
 (define-foreign-type cblas-complex-double-type () ()
-  (:actual-type :int))
+  (:actual-type :pointer))
 
 (define-parse-method cblas-complex-double ()
   (make-instance 'cblas-complex-double-type))
@@ -101,33 +101,33 @@
 
 (defcblasfun ("cblas_~adotu_sub" ("c" "z")) :void
   (n    cblas-int)
-  (x    :pointer)
+  (x    cblas-buffer)
   (incx cblas-int)
-  (y    :pointer)
+  (y    cblas-buffer)
   (incy cblas-int)
   (dotu :pointer))
 
 (defcblasfun ("cblas_~adotc_sub" ("c" "z")) :void
   (n    cblas-int)
-  (x    :pointer)
+  (x    cblas-buffer)
   (incx cblas-int)
-  (y    :pointer)
+  (y    cblas-buffer)
   (incy cblas-int)
   (dotc :pointer))
 
 (defcblasfun ("cblas_~anrm2" ("s" "d" "sc" "dz")) :scalar
   (n    cblas-int)
-  (x    :pointer)
+  (x    cblas-buffer)
   (incx cblas-int))
 
 (defcblasfun ("cblas_~aasum" ("s" "d")) :scalar
   (n    cblas-int)
-  (x    :pointer)
+  (x    cblas-buffer)
   (incx cblas-int))
 
 (defcblasfun ("cblas_i~aamax" ("s" "d" "c" "z")) cblas-index
   (n    cblas-int)
-  (x    :pointer)
+  (x    cblas-buffer)
   (incx cblas-int))
 
 (defcblasfun ("cblas_~arotg" ("s" "d" "c" "z")) :void
@@ -165,12 +165,12 @@
   (m      cblas-int)
   (n      cblas-int)
   (alpha  :scalar)
-  (a      :pointer)
+  (a      cblas-buffer)
   (lda    cblas-int)
-  (x      :pointer)
+  (x      cblas-buffer)
   (incx   cblas-int)
   (beta   :scalar)
-  (y      :pointer)
+  (y      cblas-buffer)
   (incy   cblas-int))
 
 (defcblasfun ("cblas_~ahemv" ("c" "z")) :void
@@ -226,11 +226,11 @@
   (m      cblas-int)
   (n      cblas-int)
   (alpha  :scalar)
-  (x      :pointer)
+  (x      cblas-buffer)
   (incx   cblas-int)
-  (y      :pointer)
+  (y      cblas-buffer)
   (incy   cblas-int)
-  (a      :pointer)
+  (a      cblas-buffer)
   (lda    cblas-int))
 
 (defcblasfun ("cblas_~ageru" ("c" "z")) :void
@@ -238,11 +238,11 @@
   (m      cblas-int)
   (n      cblas-int)
   (alpha  :scalar)
-  (x      :pointer)
+  (x      cblas-buffer)
   (incx   cblas-int)
-  (y      :pointer)
+  (y      cblas-buffer)
   (incy   cblas-int)
-  (a      :pointer)
+  (a      cblas-buffer)
   (lda    cblas-int))
 
 (defcblasfun ("cblas_~agerc" ("c" "z")) :void
@@ -250,11 +250,11 @@
   (m      cblas-int)
   (n      cblas-int)
   (alpha  :scalar)
-  (x      :pointer)
+  (x      cblas-buffer)
   (incx   cblas-int)
-  (y      :pointer)
+  (y      cblas-buffer)
   (incy   cblas-int)
-  (a      :pointer)
+  (a      cblas-buffer)
   (lda    cblas-int))
 
 (defcblasfun ("cblas_~asyr" ("s" "d")) :void
@@ -391,13 +391,14 @@
   (transb cblas-transpose)
   (m      cblas-int)
   (n      cblas-int)
+  (k      cblas-int)
   (alpha  :scalar)
-  (a      :pointer)
+  (a      cblas-buffer)
   (lda    cblas-int)
-  (b      :pointer)
+  (b      cblas-buffer)
   (ldb    cblas-int)
   (beta   :scalar)
-  (c      :pointer)
+  (c      cblas-buffer)
   (ldc    cblas-int))
 
 (defcblasfun ("cblas_~agemmtr" ("s" "d" "c" "z")) :void

@@ -93,7 +93,7 @@
   (:documentation "Add (alpha*x*y^H + alpha*y*x^H) to packed matrix A"))
 
 ;; Level 3: matrix-matrix operations
-(defgeneric gemm (transa transb m n alpha a lda b ldb beta c ldc)
+(defgeneric gemm (transa transb m n k alpha a lda b ldb beta c ldc)
   (:documentation "Set C to (alpha*A*B + beta*C)"))
 (defgeneric gemmtr (uplo transa transb m n alpha a lda b ldb beta c ldc)
   (:documentation "Set upper/lower part of C to corresponding part of (alpha*A*B + beta*C)"))
