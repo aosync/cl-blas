@@ -408,6 +408,7 @@
   (transb cblas-transpose)
   (m      cblas-int)
   (n      cblas-int)
+  (k      cblas-int)
   (alpha  :scalar)
   (a      :pointer)
   (lda    cblas-int)
