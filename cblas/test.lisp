@@ -1,4 +1,4 @@
-
+(in-package :cblas)
 
 (defun print-foreign-array (array type n)
   (dotimes (i n)
@@ -59,3 +59,10 @@
 	(blas:gemm :no-trans :no-trans 2 2 2 1.0 ma 2 mb 2 0.0 mc 2)
 	(format t "After mat-c~%")
 	(print-foreign-array mat-c :float 4)))
+
+(let* ((a (ndarray
+		   ((1 2)
+			(2 1))))
+	   (b (ndarray (1 1)))
+	   (c (@ a b)))
+  (format t "~a~%" c))

@@ -1,12 +1,53 @@
 (in-package :cblas)
 
 (defclass cblas-buffer ()
-  ((buffer :initarg :buffer)))
+  ((buffer :initarg :buffer)
+   (ref    :initarg :ref :initform nil)))
 
 (defclass cblas-sbuffer (cblas-buffer) ())
 (defclass cblas-dbuffer (cblas-buffer) ()) 
 (defclass cblas-cbuffer (cblas-buffer) ())
 (defclass cblas-zbuffer (cblas-buffer) ())
+
+(defun buffer-compute-offset (self off)
+  (cond
+    ((typep self 'cblas-sbuffer) (* (cffi:foreign-type-size :float)  off))
+    ((typep self 'cblas-dbuffer) (* (cffi:foreign-type-size :double) off))
+    ((typep self 'cblas-cbuffer) (* (cffi:foreign-type-size :float)  off))
+    ((typep self 'cblas-zbuffer) (* (cffi:foreign-type-size :double) off))))
+
+(defun buffer-offset (self off)
+  (let ((raw-offset (buffer-compute-offset self off)))
+    (make-instance (type-of self)
+                   :buffer (inc-pointer (slot-value self 'buffer) raw-offset)
+                   :ref    (or (slot-value self 'ref) self))))
+
+(defun type-to-buffer (type)
+  (case type
+    (:s 'cblas-sbuffer)
+    (:d 'cblas-dbuffer)
+    (:c 'cblas-cbuffer)
+    (:z 'cblas-zbuffer)))
+
+(defun alloc-buffer (n type)
+  (case type
+    (:s (foreign-alloc :float  :count n))
+    (:d (foreign-alloc :double :count n))
+    (:c (foreign-alloc :float  :count (* n 2)))
+    (:z (foreign-alloc :double :count (* n 2)))))
+
+(defun make-blas (n type)
+  (let* ((ptr (alloc-buffer n type))
+         (buf (make-instance (type-to-buffer type) :buffer ptr)))
+    (tg:finalize buf
+                 (lambda () (foreign-free ptr)))
+    buf))
+
+(defun make-vector (n type)
+  (make-blas n type))
+
+(defun make-matrix (m n type)
+  (make-blas (* m n) type))
 
 (defmethod blas:axpy (n (alpha single-float) (x cblas-sbuffer) incx (y cblas-sbuffer) incy)
   (cblas-saxpy n alpha x incx y incy))
@@ -43,8 +84,6 @@
   (cblas-cswap n x incx y incy))
 (defmethod blas:swap (n (x cblas-zbuffer) incx (y cblas-zbuffer) incy)
   (cblas-zswap n x incx y incy))
-
-
 
 (defmethod blas:dot (n (x cblas-sbuffer) incx (y cblas-sbuffer) incy)
   (cblas-sdot n x incx y incy))
@@ -99,8 +138,6 @@
   (cblas-icamax n x incx))
 (defmethod blas:i-amax (n (x cblas-zbuffer) incx)
   (cblas-izamax n x incx))
-
-
 
 (defmethod blas:gemv (trans m n (alpha single-float) (a cblas-sbuffer) lda (x cblas-sbuffer) incx (beta single-float) (y cblas-sbuffer) incy)
   (cblas-sgemv :row-major trans m n alpha a lda x incx beta y incy))
