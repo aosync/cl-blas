@@ -60,6 +60,56 @@
 	(format t "After mat-c~%")
 	(print-foreign-array mat-c :float 4)))
 
+(defun parse-dims (data)
+  (when (listp data)
+    (let ((n (parse-dims (first data))))
+      (if (every (lambda (sub)
+                   (equal (parse-dims sub) n))
+                 data)
+          (cons (length data) n)
+          (error "dimensions of data are incongruent")))))
+
+(defun flatten (data)
+  (let ((result nil))
+    (labels ((recurse (sub)
+               (dolist (el sub)
+                 (if (listp el) (recurse el) (push el result)))))
+      (recurse data))
+    (nreverse result)))
+
+(defun parse-type (data)
+  (case (type-of data)
+    (single-float :s)
+    (double-float :d)
+    (t (error "unhandled data type ~a" (type-of data)))))
+
+(defun validate-type (data)
+  (let ((type (parse-type (first data))))
+    (if (every (lambda (sub)
+             (equal (parse-type sub) type))
+           data)
+        type
+        (error "types of data are inconsistent"))))
+
+(defun parse-natural-stride (n dims)
+  (when dims
+    (let ((m (/ n (car dims))))
+      (cons m (parse-natural-stride m (cdr dims))))))
+
+(defmacro ndarray (data)
+  (let* ((dims   (parse-dims data))
+         (flat   (flatten data))
+         (type   (validate-type flat))
+         (n      (length flat))
+         (stride (parse-natural-stride n dims))
+         (result (make-blas n type))))
+  
+  
+  (format t "~a~%" (length data)))
+
+
+(ndarray (1 2 3))
+
 (let* ((a (ndarray
 		   ((1 2)
 			(2 1))))
