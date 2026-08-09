@@ -5,9 +5,12 @@
   :serial t
   :depends-on (:cffi :trivial-garbage)
   :components ((:file "package")
-			   (:file "blas")
-			   (:module "cblas"
-				:serial t
-				:components ((:file "package")
-							 (:file "cblas")
-							 (:file "impl")))))
+			         (:file "blas")
+			         (:module "cblas"
+				        :serial t
+				        :components ((:file "package")
+							               (:file "cblas")
+							               (:file "impl")))
+               (:module "abaco"
+				        :serial t
+				        :components ((:file "package")))))

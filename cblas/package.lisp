@@ -1,6 +1,8 @@
 (defpackage :cblas
   (:use :cl :cffi))
 
+(in-package :cblas)
+
 (defun substitute-keywords (subs form)
   "Substitute keywords following P-LIST SUBS in FORM"
   (labels ((walk (form)
